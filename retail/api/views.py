@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import RegisterSerializer, LoginSerializer, UserSerializer
+from .serializers import RegisterSerializer, LoginSerializer, UserSerializer, changepasswordSerializer
 from django.contrib.auth import authenticate
 from rest_framework.permissions import IsAuthenticated
 #token
@@ -41,10 +41,18 @@ class LoginView(APIView):
             else:
                 return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 class profileView(APIView):
     parser_classes=[IsAuthenticated]
     def get(self,request):
         user=request.user
         serializer=UserSerializer(user)
         return Response(serializer.data,status=status.HTTP_200_OK)
+
+class updatepasswordView(APIView):
+    permission_classes=[IsAuthenticated]
+    def post(self,request):
+        user=request.user
+        serializer=changepasswordSerializer(data=request.data,context={'user':user})
+        if serializer.is_valid():
+            return Response({"message":"Password updated successfully"},status=status.HTTP_200_OK)
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)

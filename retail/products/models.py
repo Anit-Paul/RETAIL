@@ -62,3 +62,26 @@ class Product(models.Model):
         super().save(*args, **kwargs)
     def __str__(self):
         return self.name
+    
+class InventoryTransaction(models.Model):
+
+    TRANSACTION_TYPES = [
+        ("IN", "Stock In"),
+        ("OUT", "Stock Out"),
+        ("ADJUSTMENT", "Stock Adjustment"),
+    ]
+
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        related_name="stock_transactions"
+    )
+
+    transaction_type = models.CharField(
+        max_length=20,
+        choices=TRANSACTION_TYPES
+    )
+
+    quantity = models.PositiveIntegerField()
+    remarks = models.CharField(max_length=255, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)

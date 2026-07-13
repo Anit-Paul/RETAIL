@@ -10,6 +10,11 @@ class Category(models.Model):
 
 
 class Product(models.Model):
+    product_id = models.CharField(
+    max_length=50,
+    unique=True,
+    editable=False
+    )
     name = models.CharField(max_length=150)
     category = models.ForeignKey(
         Category,
@@ -43,5 +48,17 @@ class Product(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+
+    def save(self, *args, **kwargs):
+        if not self.product_id:
+            last_product = Product.objects.order_by('-id').first()
+
+            if last_product:
+                last_id = int(last_product.product_id.replace("PROD", ""))
+                self.product_id = f"PROD{last_id + 1:03d}"
+            else:
+                self.product_id = "PROD001"
+
+        super().save(*args, **kwargs)
     def __str__(self):
         return self.name

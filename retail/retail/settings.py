@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     #custom apps
     'authentication',
     'api',
+    'products',
     #third party
     'rest_framework',
     'rest_framework_simplejwt',
